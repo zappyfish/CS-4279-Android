@@ -25,6 +25,6 @@ public class FullStudyActivity extends AppCompatActivity {
 
     private void displayStudyInfo(Study study) {
         TextView txt = (TextView)findViewById(R.id.study_info);
-        txt.setText(study.getName() + "\nLorum Ipsum blah blah blah blah blah");
+        txt.setText(study.getDescription());
     }
 }

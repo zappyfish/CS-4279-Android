@@ -7,11 +7,13 @@ public class Study implements Serializable {
     private final String mName;
     private final String mResearcher;
     private final String mInstitution;
+    private final String mDescription;
 
-    public Study(String name, String researcher, String institution) {
+    public Study(String name, String researcher, String institution, String description) {
         mName = name;
         mResearcher = researcher;
         mInstitution = institution;
+        mDescription = description;
     }
 
     public String getName() {
@@ -25,4 +27,6 @@ public class Study implements Serializable {
     public String getInstitution() {
         return mInstitution;
     }
+
+    public String getDescription() { return mDescription; }
 }

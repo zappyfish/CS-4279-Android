@@ -12,10 +12,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+import com.example.liamkelly.patient_android.api.APIManager;
+import com.example.liamkelly.patient_android.api.RecordsAPIRequest;
 import com.example.liamkelly.patient_android.studies.Study;
 import com.example.liamkelly.patient_android.studies.StudyViewerFragment;
 import com.example.liamkelly.patient_android.user.CurrentUser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -65,16 +72,42 @@ public class WelcomeActivity extends AppCompatActivity implements StudyViewerFra
     }
 
     private void setTestSudies() {
-        Study test1 = new Study("Effects of X on Y", "Dr. Anna", "Vanderbilt University");
-        Study test2 = new Study("Is Smoking Bad?", "Dr. Seuss", "Rhyme College");
-        Study test3 = new Study("The Extent of Laziness", "(not complete)", "(not complete)");
+        final StudyViewerFragment fragment = (StudyViewerFragment)getSupportFragmentManager().findFragmentById(R.id.study_preview_fragment);
+        RecordsAPIRequest testStudyRequest = new RecordsAPIRequest.Builder()
+                .setMethod(RecordsAPIRequest.GET)
+                .setPath("/studies/check")
+                .setParam("token", "1234")
+                .setParam("key", "1234")
+                .setCallback(new RecordsAPIRequest.Callback() {
+                    @Override
+                    public void onRequestSuccess(JSONObject response) {
+                        List<Study> studies = new LinkedList<>();
+                        Iterator<String> keys = response.keys();
+                        while (keys.hasNext()) {
+                            String key = keys.next();
+                            try {
+                                JSONObject studyData = response.getJSONObject(key);
+                                String name = studyData.getString("name");
+                                String researcher = studyData.getString("researcher");
+                                String description = studyData.getString("description");
+                                String institution = studyData.getString("institution");
 
-        StudyViewerFragment fragment = (StudyViewerFragment)getSupportFragmentManager().findFragmentById(R.id.study_preview_fragment);
-        List<Study> studies = new LinkedList<>();
-        studies.add(test1);
-        studies.add(test2);
-        studies.add(test3);
-        fragment.addStudies(studies);
+                                studies.add(new Study(name, researcher, institution, description));
+                            } catch (JSONException e) {
+                                // ?
+                            }
+                        }
+                        fragment.addStudies(studies);
+                    }
+
+                    @Override
+                    public void onRequestFailure(VolleyError error) {
+
+                    }
+                })
+                .build();
+        APIManager.getInstance(this).makeRequest(testStudyRequest);
+
     }
 
     @Override
