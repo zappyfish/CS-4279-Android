@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                dialogBuilder.setTitle("Sign On");
+                dialogBuilder.setTitle("Incredibly Secure, Sophisticated Sign On");
 
                 final EditText input = new EditText(MainActivity.this);
                 input.setHint("enter your name");
