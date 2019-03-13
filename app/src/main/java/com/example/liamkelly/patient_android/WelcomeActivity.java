@@ -18,6 +18,8 @@ import com.example.liamkelly.patient_android.api.RecordsAPIRequest;
 import com.example.liamkelly.patient_android.studies.Study;
 import com.example.liamkelly.patient_android.studies.StudyViewerFragment;
 import com.example.liamkelly.patient_android.user.CurrentUser;
+import com.example.liamkelly.patient_android.user.data.Matches;
+import com.example.liamkelly.patient_android.user.data.criteria.Criterion;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +39,13 @@ public class WelcomeActivity extends AppCompatActivity implements StudyViewerFra
 
         getWelcome();
         initInteractions();
-        setTestSudies();
+        // setTestSudies();
+        setMatchedStudies();
+    }
+
+    private void setMatchedStudies() {
+        final StudyViewerFragment fragment = (StudyViewerFragment)getSupportFragmentManager().findFragmentById(R.id.study_preview_fragment);
+        fragment.addStudies(Matches.getMatchedStudies());
     }
 
     private void initInteractions() {
@@ -92,7 +100,7 @@ public class WelcomeActivity extends AppCompatActivity implements StudyViewerFra
                                 String description = studyData.getString("description");
                                 String institution = studyData.getString("institution");
 
-                                studies.add(new Study(name, researcher, institution, description));
+                                studies.add(new Study(name, researcher, institution, description, new LinkedList<Criterion>()));
                             } catch (JSONException e) {
                                 // ?
                             }
