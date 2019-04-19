@@ -41,6 +41,12 @@ public class WelcomeActivity extends AppCompatActivity implements StudyViewerFra
         initInteractions();
         // setTestSudies();
         setMatchedStudies();
+
+        long elapsed = System.nanoTime() - TimeKeeper.LAST_TIME;
+
+        double ms = elapsed / 1000000.0;
+
+        Toast.makeText(this, "matching took: " + ms + " milliseconds", Toast.LENGTH_LONG).show();
     }
 
     private void setMatchedStudies() {

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -131,7 +132,10 @@ public class MainActivity extends AppCompatActivity {
                         String entered = input.getText().toString();
                         if (entered.length() > 0) {
                             CurrentUser.getInstance().setName(input.getText().toString());
+                            // TODO: Pick one of the below for different tests
+                            TimeKeeper.LAST_TIME = System.nanoTime();
                             startQuerySesssion();
+                            // getAllStudiesForPhoneMatching();
                         } else {
                             Toast.makeText(MainActivity.this, "Please enter your login credentials", Toast.LENGTH_SHORT).show();
                         }
@@ -146,6 +150,41 @@ public class MainActivity extends AppCompatActivity {
                 dialogBuilder.show();
             }
         });
+    }
+
+    private void getAllStudiesForPhoneMatching() {
+        RecordsAPIRequest request = new RecordsAPIRequest.Builder()
+                .setMethod(RecordsAPIRequest.GET)
+                .setPath("/graph/all")
+                .setCallback(new RecordsAPIRequest.Callback() {
+                    @Override
+                    public void onRequestSuccess(JSONObject response) {
+                        try {
+                            List<Integer> matchNumbers = getMatchNumbers(response.getJSONObject("query"));
+                            JSONObject potentialMatches = response.getJSONObject("matches");
+                            JSONObject matches = new JSONObject();
+                            for (int i = 0; i < matchNumbers.size(); i++) {
+                                String key = "" + matchNumbers.get(i);
+                                matches.put(key, potentialMatches.get(key));
+                            }
+                            // Everything left is a match
+                            Matches.setMatches(matches);
+                            // Now start activity
+                            Intent i = new Intent(MainActivity.this, WelcomeActivity.class);
+                            startActivity(i);
+                        } catch (JSONException e) {
+                            Log.d("Graph all exception", e.toString());
+                        }
+
+                    }
+
+                    @Override
+                    public void onRequestFailure(VolleyError error) {
+
+                    }
+                })
+                .build();
+        APIManager.getInstance(this).makeRequest(request);
     }
 
     private void startQuerySesssion() {

@@ -46,13 +46,14 @@ public class StudyRequirements {
         while (keys.hasNext()) {
             String key = keys.next();
             try {
+                String type = payload.getJSONObject(key).getString("type");
                 JSONObject nextJson = payload.getJSONObject(key);
-                if (key.equals(CONDITION)) {
-                    mStudyCriteria.add(getConditionCriterion(nextJson));
-                } else if (key.equals(ENUM)) {
-                    mStudyCriteria.add(getEnumCriterion(nextJson));
-                } else if (key.equals(RANGE)) {
-                    mStudyCriteria.add(getRangeCriterion(nextJson));
+                if (type.equals(CONDITION)) {
+                    mStudyCriteria.add(getConditionCriterion(key, nextJson));
+                } else if (type.equals(ENUM)) {
+                    mStudyCriteria.add(getEnumCriterion(key, nextJson));
+                } else if (type.equals(RANGE)) {
+                    mStudyCriteria.add(getRangeCriterion(key, nextJson));
                 }
             } catch (JSONException e) {
 
@@ -60,9 +61,8 @@ public class StudyRequirements {
         }
     }
 
-    private static ConditionCriterion getConditionCriterion(JSONObject conditionJson) {
+    private static ConditionCriterion getConditionCriterion(String name, JSONObject conditionJson) {
         try {
-            String name = conditionJson.getString(NAME);
             boolean shouldHave = conditionJson.getBoolean(STATE);
             return new ConditionCriterion(name, shouldHave);
         } catch (JSONException e) {
@@ -70,9 +70,8 @@ public class StudyRequirements {
         }
     }
 
-    private static EnumCriterion getEnumCriterion(JSONObject enumJson) {
+    private static EnumCriterion getEnumCriterion(String name, JSONObject enumJson) {
         try {
-            String name = enumJson.getString(NAME);
             String value = enumJson.getString(VALUE);
             return new EnumCriterion(name, value);
         } catch (JSONException e) {
@@ -80,12 +79,11 @@ public class StudyRequirements {
         }
     }
 
-    private static RangeCriterion getRangeCriterion(JSONObject rangeJson) {
+    private static RangeCriterion getRangeCriterion(String name, JSONObject rangeJson) {
         try {
-            String key = rangeJson.getString(NAME);
             int min = rangeJson.getInt(MIN);
             int max = rangeJson.getInt(MAX);
-            return new RangeCriterion(key, min, max);
+            return new RangeCriterion(name, min, max);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

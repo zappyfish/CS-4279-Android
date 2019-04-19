@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class RecordsAPIRequest {
 
-    private static final String BASE_URL = "http://10.67.172.123:5000";
+    private static final String BASE_URL = "http://10.66.155.160:5000";
     private static final String TOKEN_KEY = "token";
     public static final int GET = Request.Method.GET;
     public static final int POST = Request.Method.POST;
